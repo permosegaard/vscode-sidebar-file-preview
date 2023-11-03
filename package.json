@@ -2,7 +2,7 @@
 	"name": "file-preview",
 	"displayName": "File Previewer",
 	"description": "Preview a file in the sidebar or panel",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"publisher": "permosegaard",
 	"keywords": [
 		"preview",
