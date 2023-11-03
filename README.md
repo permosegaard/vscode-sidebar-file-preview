@@ -1,4 +1,4 @@
-# Docs View
+# File Preview
 
 VS Code extension that displays an arbitary file preview in a sidebar or panel 
 

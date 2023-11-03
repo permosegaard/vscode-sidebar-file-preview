@@ -87,7 +87,7 @@ export class PreviewProvider implements vscode.WebviewViewProvider {
 			else {
 				const folder = vscode.workspace.workspaceFolders[0];
 
-				const todo_path = vscode.Uri.joinPath(folder.uri, this._filename);
+				const todo_path = vscode.Uri.joinPath(folder.uri, this._filename as string);
 				await vscode.workspace.fs.writeFile(todo_path, Uint8Array.from([]));
 
 				document = await vscode.workspace.openTextDocument(todo_path);
@@ -169,7 +169,7 @@ export class PreviewProvider implements vscode.WebviewViewProvider {
 		if (vscode.workspace.workspaceFolders !== undefined) {
 			for (const folder of vscode.workspace.workspaceFolders) {
 				try {
-					const todo_path = vscode.Uri.joinPath(folder.uri, this._filename);
+					const todo_path = vscode.Uri.joinPath(folder.uri, this._filename as string);
 					return await vscode.workspace.openTextDocument(todo_path);
 				}
 				catch (exception) { /* no-op */ }
