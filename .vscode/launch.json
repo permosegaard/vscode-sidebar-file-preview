@@ -11,12 +11,12 @@
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
 			"args": [
-				"${workspaceRoot}",
+				// "${workspaceRoot}",
 				// "${workspaceRoot}/testing/testing.js",
 				"--extensionDevelopmentPath=${workspaceRoot}"
 			],
 			"outFiles": ["${workspaceFolder}/out/**/*.js"],
-			"preLaunchTask": "npm: webpack"
+			// "preLaunchTask": "npm: webpack" // NOTE: better work flow with "npm run webpack-dev" first
 		}
 	]
 }

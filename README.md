@@ -2,9 +2,9 @@
 
 VS Code extension that displays an arbitary file preview in a sidebar or panel 
 
-![The docs view in the sidebar](https://raw.githubusercontent.com/permosegaard/vscode-sidebar-file-preview/master/assets/screenshot-sidebar.png)
+![The preview in the sidebar](https://raw.githubusercontent.com/permosegaard/vscode-sidebar-file-preview/master/assets/screenshot-sidebar.png)
 
-![The docs view in the panel](https://raw.githubusercontent.com/permosegaard/vscode-sidebar-file-preview/master/assets/screenshot-panel.png)
+![The preview in the panel](https://raw.githubusercontent.com/permosegaard/vscode-sidebar-file-preview/master/assets/screenshot-panel.png)
 
 ## Features
 

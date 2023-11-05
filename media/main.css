@@ -1,7 +1,7 @@
 body {
 	word-wrap: break-word;
 	margin: 1em 0;
-	padding: 0;
+	padding: 0 5px;
 
 	cursor: default;
 	font-size: 14px;
@@ -15,15 +15,11 @@ pre code {
 	background: none;
 }
 
-#main > * {
-	padding: 0 20px;
-}
-
 .no-content {
 	font-style: italic;
 }
 
-#main > hr {
+body > hr {
 	display: block;
 	border: none;
 	border-color: var(--vscode-sideBarSectionHeader-border);
