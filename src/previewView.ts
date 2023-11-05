@@ -39,7 +39,7 @@ export class PreviewProvider implements vscode.WebviewViewProvider {
 				await this.reset_highlighter();
 			}
 
-			this.update();
+			await this.update();
 		}, null, this._disposables)
 	}
 
@@ -78,17 +78,16 @@ export class PreviewProvider implements vscode.WebviewViewProvider {
 
 	private async reset_highlighter() {
 		const name =  vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Light ? "light-plus" : "dark-plus";
-
 		this._highlighter = await getHighlighter({ theme: name });
 	}
 
 	private reset_watcher() {
 		if (this._watcher !== undefined) { this._watcher.dispose(); }
 
-		let timeout: NodeJS.Timeout;
+		let timeout: NodeJS.Timeout; // NOTE: debounce
 		const update = async () => {
-			if (timeout) { clearInterval(timeout); }
-			timeout = setInterval(this.update, 100);
+			if (timeout) { clearTimeout(timeout); }
+			timeout = setTimeout(async () => { await this.update(); }, 100);
 		}
 
 		const watcher = vscode.workspace.createFileSystemWatcher(`**/${this._filename}`);
@@ -130,13 +129,8 @@ export class PreviewProvider implements vscode.WebviewViewProvider {
 			return;
 		}
 
-		if (!this._watcher) {
-			this.reset_watcher();
-		}
-
-		if (!this._highlighter) {
-			await this.reset_highlighter();
-		}
+		if (!this._watcher) { this.reset_watcher(); }
+		if (!this._highlighter) { await this.reset_highlighter(); }
 
 		this._view.title = "VIEWER";
 		this._view.description = `${this._filename}`;
@@ -161,7 +155,6 @@ export class PreviewProvider implements vscode.WebviewViewProvider {
 							);
 							break;
 						case DocumentType.Code:
-							console.log(this);
 							html = await render_code(
 								this._view!, this._extensionUri, workspace_folder as vscode.WorkspaceFolder, this._highlighter!, this._filename!
 							);
@@ -191,10 +184,7 @@ export class PreviewProvider implements vscode.WebviewViewProvider {
 
 		// Don't show progress indicator right away, which causes a flash
 		await new Promise<void>(resolve => setTimeout(resolve, 50)).then(() => {
-			return vscode.window.withProgress(
-				{ location: { viewId: PreviewProvider.viewType } },
-				async () => await updatePromise()
-			);
+			return vscode.window.withProgress({ location: { viewId: PreviewProvider.viewType } }, updatePromise);
 		});
 	}
 
@@ -223,32 +213,24 @@ function getNonce(): string {
 }
 
 function filename_to_document_type(filename: string): DocumentType {
-	const extension_mappings = [
-		// markdown
-		["md", DocumentType.Markdown],
-
-		// plaintext 
-		["txt", DocumentType.PlainText],
-
-		// html
-		["htm", DocumentType.HTML],
-		["html", DocumentType.HTML],
-
-		// images
-		["bmp", DocumentType.Image],
-		["jpg", DocumentType.Image],
-		["jpeg", DocumentType.Image],
-		["png", DocumentType.Image],
-		["gif", DocumentType.Image],
-
-		// code
-		["ts", DocumentType.Code],
-		["js", DocumentType.Code],
+	const extension_mappings = [ // NOTE: feel free to open pull's with additions
+		[DocumentType.Markdown, ["md"]],
+		[DocumentType.PlainText, ["txt", "text", "csv"]],
+		[DocumentType.HTML, ["htm", "html"]],
+		[DocumentType.Image, ["bmp", "jpg", "jpeg", "png", "gif"]],
+		[DocumentType.Code, [
+			"js", "jsx", "ts", "tsx", // javascripts
+			"lua", // lua
+			"rs", // rust
+			"sh", "ps1" // shell
+		]],
 	];
 
-	for (const [extension, kind] of extension_mappings) {
-		if (filename.endsWith(`.${extension}`)) {
-			return kind as DocumentType;
+	for (const [kind, extensions] of extension_mappings) {
+		for (const extension of (extensions as string[])) {
+			if (filename.endsWith(`.${extension}`)) {
+				return kind as DocumentType;
+			}
 		}
 	}
 
